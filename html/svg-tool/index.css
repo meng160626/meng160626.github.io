@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+}
+
+main {
+    width: 100vw;
+    height: 100vh;
+    background-color: #063a14;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+header {
+    color: #FFF;
+    font-size: 24px;
+}
+
+.form-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 1200px;
+}
+
+.form-item .label {
+    font-size: 18px;
+    color: rgba(255, 265, 255, .5);
+    width: 5em;
+}
+
+.form-item .ipt-box {
+    flex-grow: 1;
+    border: 1px solid rgba(255, 265, 255, .5);
+    outline: none;
+    background: none;
+    color: #F8DA5E;
+    font-size: 18px;
+    min-height: 1.8em;
+    text-indent: .5em;
+    font-family: Arial, Helvetica, sans-serif;
+    transition: all .2s linear;
+    border-radius: 6px;
+}
+
+.form-item .ipt-box:hover {
+    border: 1px solid rgba(255, 255, 255, .8);
+    box-shadow: 0 0 8px rgba(255, 255, 255, .5);
+}
+
+.form-item .ipt-box:focus {
+    border: 1px solid rgba(248, 218, 94, .8);
+    box-shadow: 0 0 8px rgba(248, 218, 94, .5);
+}
+
+.form-item .textarea-box {
+    min-height: 240px;
+    resize: none;
+}
+
+.form-item .textarea-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-item .textarea-box::-webkit-scrollbar-track {
+    background-color: #8b7a35;
+    border-radius: 6px;
+}
+
+.form-item .textarea-box::-webkit-scrollbar-thumb {
+    background-color: #F8DA5E;
+    border-radius: 6px;
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>SVG基础尺寸调整</title>
+    <link rel="stylesheet" type="text/css" href="./index.css" />
+    <link rel="icon" href="./icon.png">
+    <style>
+        .icon{
+            width: 2.6em;
+            height: 2.6em;
+            /* stroke: white; */
+            fill: white;                 /* 填充颜色 */
+            stroke-width: 1pt;                 /* 线条宽度 */
+            stroke-miterlimit: 10;
+            stroke-linecap: round;                 /* 两端处理方式 */
+            stroke-linejoin: round;                 /* 中间绘制方式 */
+            stroke-dasharray: 400;          /* 虚线长度 虚线间隔 */
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header>SVG基础尺寸调整</header>
+        <div class="form-item">
+            <span class="label">SVG源码</span>
+            <textarea id="svg-old" class="ipt-box textarea-box" placeholder="请输入SVG源码"></textarea>
+        </div>
+        <div class="form-item">
+            <span class="label">转前预览</span>
+            <div id="preview"></div>
+        </div>
+        <div class="form-item">
+            <span class="label">转换后尺寸</span>
+            <input id="size" class="ipt-box" placeholder="请输入转换后尺寸" />
+        </div>
+        <div class="form-item">
+            <span class="label">转换后源码</span>
+            <textarea id="translate" class="ipt-box textarea-box" disabled placeholder="请先输入SVG源码"></textarea>
+        </div>
+        <div class="form-item">
+            <span class="label">转后预览</span>
+            <div id="preview2"></div>
+        </div>
+    </main>
+</body>
+<script type="text/javascript" src="./decimal.min.js"></script>
+<script type="text/javascript" src="./index.js"></script>
+</html>
