@@ -133,6 +133,11 @@ header .color.button.active {
     background-color: #d8e3e7;
 }
 
+.answer .false {
+    color: red;
+    background-color: #d8e3e7;
+}
+
 footer {
     display: flex;
     justify-content: center;
