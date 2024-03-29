@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLL-六格观察法</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="./home.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <span 
+                :class="'button color ' + (selectedColors.indexOf('white') === -1 ? '' : 'active')" 
+                @click="chooseBottomColor('white')"
+            >白底</span>
+            <span 
+                :class="'button color ' + (selectedColors.indexOf('yellow') === -1 ? '' : 'active')" 
+                @click="chooseBottomColor('yellow')"
+            >黄底</span>
+            <span 
+                :class="'button color ' + (selectedColors.indexOf('blue') === -1 ? '' : 'active')" 
+                @click="chooseBottomColor('blue')"
+            >蓝底</span>
+            <span 
+                :class="'button color ' + (selectedColors.indexOf('green') === -1 ? '' : 'active')" 
+                @click="chooseBottomColor('green')"
+            >绿底</span>
+            <span 
+                :class="'button color ' + (selectedColors.indexOf('red') === -1 ? '' : 'active')" 
+                @click="chooseBottomColor('red')"
+            >红底</span>
+            <span 
+                :class="'button color ' + (selectedColors.indexOf('orange') === -1 ? '' : 'active')" 
+                @click="chooseBottomColor('orange')"
+            >橙底</span>
+        </header>
+        <div class="timer">
+            <span>{{ visibleTimer }}ms</span>
+        </div>
+        <div class="cube" @click="scramble">
+            <!-- LUF角块 -->
+            <div class="block LUF">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="left"></div>
+                <div class="front" :style="{backgroundColor: pllColors[0]}"></div>
+            </div>
+            <!-- UF棱块 -->
+            <div class="block UF">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="front" :style="{backgroundColor: pllColors[1]}"></div>
+            </div>
+            <!-- RUF角块 -->
+            <div class="block RUF">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="front" :style="{backgroundColor: pllColors[2]}"></div>
+                <div class="right" :style="{backgroundColor: pllColors[3]}"></div>
+            </div>
+            <!-- RU棱块 -->
+            <div class="block RU">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="right" :style="{backgroundColor: pllColors[4]}"></div>
+            </div>
+            <!-- RBU角块 -->
+            <div class="block RBU">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="right" :style="{backgroundColor: pllColors[5]}"></div>
+                <div class="back"></div>
+            </div>
+            <!-- BU棱块 -->
+            <div class="block BU">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="back"></div>
+            </div>
+            <!-- LBU角块 -->
+            <div class="block LBU">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="left"></div>
+                <div class="back"></div>
+            </div>
+            <!-- LU棱块 -->
+            <div class="block LU">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+                <div class="left"></div>
+            </div>
+            <!-- 中心块 -->
+            <div class="block center">
+                <div class="top" :style="{backgroundColor: colorE}"></div>
+            </div>
+        </div>
+        <div class="answer" v-if="answers.length > 0">
+            <div 
+                v-for="item in answers" 
+                :id="item" 
+                @click="clickAnswer(item)" 
+                :class="(item === pll && right) ? 'right' : ''">
+                <span>{{item}}</span>
+                <img :src="'./image/' + item + '.png'" alt="">
+            </div>
+        </div>
+        <footer v-if="answers.length > 0">
+            <span @click="clickRight">显示正确答案</span>
+        </footer>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                selectedColors: ['white'],
+                // pll颜色组，从左前块前面、依次到右后块右面
+                pllColors: [],
+                colors: [],
+                colorA: '',
+                colorB: '',
+                colorC: '',
+                colorD: '',
+                colorE: '',
+                Ua: ['colorA', 'colorB', 'colorA', 'colorB', 'colorD', 'colorB', 'colorC', 'colorC', 'colorC', 'colorD', 'colorA', 'colorD', 'colorA', 'colorB', 'colorA'],
+                Ub: ['colorA', 'colorD', 'colorA', 'colorB', 'colorA', 'colorB', 'colorC', 'colorC', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorD', 'colorA'],
+                Z: ['colorA', 'colorB', 'colorA', 'colorB', 'colorA', 'colorB', 'colorC', 'colorD', 'colorC', 'colorD', 'colorC', 'colorD', 'colorA', 'colorB', 'colorA'],
+                H: ['colorA', 'colorC', 'colorA', 'colorB', 'colorD', 'colorB', 'colorC', 'colorA', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorC', 'colorA'],
+                V: ['colorA', 'colorA', 'colorC', 'colorD', 'colorC', 'colorB', 'colorC', 'colorB', 'colorA', 'colorB', 'colorD', 'colorD', 'colorA', 'colorA', 'colorC'],
+                E: ['colorD', 'colorA', 'colorB', 'colorC', 'colorB', 'colorA', 'colorB', 'colorC', 'colorD', 'colorA', 'colorD', 'colorC', 'colorD', 'colorA', 'colorB'],
+                Ab: ['colorA', 'colorA', 'colorB', 'colorC', 'colorB', 'colorC', 'colorD', 'colorC', 'colorA', 'colorB', 'colorD', 'colorD', 'colorA', 'colorA', 'colorB'],
+                Aa: ['colorA', 'colorA', 'colorC', 'colorD', 'colorB', 'colorA', 'colorB', 'colorC', 'colorB', 'colorA', 'colorD', 'colorD', 'colorA', 'colorA', 'colorC'],
+                T: ['colorA', 'colorA', 'colorB', 'colorC', 'colorD', 'colorA', 'colorB', 'colorC', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorA', 'colorB'],
+                Y: ['colorA', 'colorA', 'colorC', 'colorD', 'colorB', 'colorB', 'colorC', 'colorD', 'colorA', 'colorB', 'colorC', 'colorD', 'colorA', 'colorA', 'colorC'],
+                F: ['colorA', 'colorC', 'colorB', 'colorC', 'colorB', 'colorA', 'colorB', 'colorA', 'colorC', 'colorD', 'colorD', 'colorD', 'colorA', 'colorC', 'colorB'],
+                Rb: ['colorA', 'colorB', 'colorA', 'colorB', 'colorA', 'colorC', 'colorD', 'colorC', 'colorB', 'colorC', 'colorD', 'colorD', 'colorA', 'colorB', 'colorA'],
+                Ra: ['colorA', 'colorA', 'colorB', 'colorC', 'colorB', 'colorA', 'colorB', 'colorD', 'colorC', 'colorD', 'colorC', 'colorD', 'colorA', 'colorA', 'colorB'],
+                Jb: ['colorA', 'colorB', 'colorB', 'colorC', 'colorA', 'colorA', 'colorB', 'colorC', 'colorC', 'colorD', 'colorD', 'colorD', 'colorA', 'colorB', 'colorB'],
+                Ja: ['colorD', 'colorD', 'colorA', 'colorB', 'colorB', 'colorB', 'colorC', 'colorC', 'colorD', 'colorA', 'colorA', 'colorC', 'colorD', 'colorD', 'colorA'],
+                Ga: ['colorA', 'colorB', 'colorB', 'colorC', 'colorD', 'colorA', 'colorB', 'colorA', 'colorC', 'colorD', 'colorC', 'colorD', 'colorA', 'colorB', 'colorB'],
+                Gb: ['colorA', 'colorC', 'colorB', 'colorC', 'colorA', 'colorA', 'colorB', 'colorD', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorC', 'colorB'],
+                Gc: ['colorA', 'colorC', 'colorB', 'colorC', 'colorD', 'colorA', 'colorB', 'colorB', 'colorC', 'colorD', 'colorA', 'colorD', 'colorA', 'colorC', 'colorB'],
+                Gd: ['colorA', 'colorD', 'colorB', 'colorC', 'colorC', 'colorA', 'colorB', 'colorA', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorD', 'colorB'],
+                Na: ['colorC', 'colorA', 'colorA', 'colorB', 'colorD', 'colorD', 'colorA', 'colorC', 'colorC', 'colorD', 'colorB', 'colorB', 'colorC', 'colorA', 'colorA'],
+                Nb: ['colorA', 'colorA', 'colorC', 'colorD', 'colorD', 'colorB', 'colorC', 'colorC', 'colorA', 'colorB', 'colorB', 'colorD', 'colorA', 'colorA', 'colorC'],
+                plls: ['Ua', 'Ub', 'Z', 'H', 'V', 'E', 'Ab', 'Aa', 'T', 'Y', 'F', 'Rb', 'Ra', 'Jb', 'Ja', 'Ga', 'Gb', 'Gc', 'Gd', 'Na', 'Nb'],
+                bwhite: ['blue', 'red', 'green', 'orange', 'blue', 'red', 'green'], 
+                byellow: ['blue', 'orange', 'green', 'red', 'blue', 'orange', 'green'], 
+                bblue: ['white', 'orange', 'yellow', 'red', 'white', 'orange', 'yellow'], 
+                bgreen: ['white', 'red', 'yellow', 'orange', 'white', 'red', 'yellow'], 
+                bred: ['white', 'blue', 'yellow', 'green', 'white', 'blue', 'yellow'], 
+                borange: ['white', 'green', 'yellow', 'blue', 'white', 'green', 'yellow'], 
+                timer: 0,
+                visibleTimer: 0,
+                answers: [],
+                pll: '',
+                right: false
+            },
+            created() {
+                this.colorA = 'blue';
+                this.colorB = 'red';
+                this.colorC = 'green';
+                this.colorD = 'orange';
+                this.colorE = 'yellow';
+                this.pllColors.push(this.colorA, this.colorA, this.colorA, this.colorB, this.colorB, this.colorB);
+                            
+            },
+            methods: {
+                // 选择底色
+                chooseBottomColor(color) {
+                    this.selectedColors.indexOf(color) === -1 ?
+                        this.selectedColors.push(color) :
+                        this.selectedColors.splice(this.selectedColors.indexOf(color), 1);
+                    if (this.selectedColors.length === 0) {
+                        this.$message.error('最少要选择一个底色');
+                        this.selectedColors.push(color);
+                    }
+                },
+                // 随机底色
+                rondomBottom() {
+                    let rondomB = this.selectedColors[parseInt(Math.random()*this.selectedColors.length,10)];
+                    let rondomColors = this['b' + rondomB];
+                    let index = parseInt(Math.random()*3,10);
+                    this.colorA = rondomColors[index];
+                    this.colorB = rondomColors[index + 1];
+                    this.colorC = rondomColors[index + 2];
+                    this.colorD = rondomColors[index + 3];
+                    switch(rondomB) {
+                        case 'white':
+                            this.colorE = 'yellow';
+                            break;
+                        case 'yellow':
+                            this.colorE = 'white';
+                            break;
+                        case 'blue':
+                            this.colorE = 'green';
+                            break;
+                        case 'green':
+                            this.colorE = 'blue';
+                            break;
+                        case 'red':
+                            this.colorE = 'orange';
+                            break;
+                        case 'orange':
+                            this.colorE = 'red';
+                            break;
+                    }
+                },
+                // 按照随机出来的pll逆向打乱
+                reversePll() {
+                    this.pll = this.plls[parseInt(Math.random()*21,10)];
+                    let index = parseInt(Math.random()*3,10) * 3;
+                    this.pllColors = this[this.pll].slice(index, index + 6).map(e => {
+                        return this[e];
+                    });
+                    
+                },
+                // 根据答案生成选项
+                initSelect() {
+                    if (this.pll === 'Ua' || this.pll === 'Ub' || this.pll === 'Z' || this.pll === 'H') {
+                        this.answers = ['Ub', 'Ua', 'Z', 'H'];
+                    }
+                    if (this.pll === 'Aa' || this.pll === 'Ab' || this.pll === 'V' || this.pll === 'Ra' || this.pll === 'Rb' || this.pll === 'Y' || this.pll === 'Ga' || this.pll === 'Gb' || this.pll === 'Gc' || this.pll === 'Gd') {
+                        this.answers = ['Aa', 'Ab', 'V', 'Ra', 'Rb', 'Y', 'Ga', 'Gb', 'Gc', 'Gd'];
+                    }
+                    if (this.pll === 'E' || this.pll === 'T' || this.pll === 'Na' || this.pll === 'Nb' || this.pll === 'Ja' || this.pll === 'Jb' || this.pll === 'F') {
+                        this.answers = ['E', 'T', 'Na', 'Nb', 'Ja', 'Jb', 'F'];
+                    }
+                },
+                // 打乱
+                scramble() {
+                    this.right = false;
+                    this.rondomBottom();
+                    this.reversePll();
+                    this.initSelect();
+                    this.time = Date.now();
+                },
+                // 点击答案，反馈结果
+                clickAnswer(pll) {
+                    if (this.pll === pll) {
+                        this.$message({
+                            message: '正确',
+                            type: 'success'
+                        });
+                        this.right = true;
+                        this.visibleTimer = Date.now() - this.time;
+                    } else {
+                        this.$message.error('错误');
+                    }
+                },
+                // 显示正确答案
+                clickRight() {
+                    this.right = true;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
