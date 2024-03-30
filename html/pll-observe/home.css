@@ -30,6 +30,16 @@ header .color.button.active {
     justify-content: center;
     font-size: 36px;
     color: #d8e3e7;
+    position: relative;
+}
+
+.timer .time-list {
+    position: absolute;
+    left: 24px;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
 }
 
 .cube {

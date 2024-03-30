@@ -36,7 +36,10 @@
             >橙底</span>
         </header>
         <div class="timer">
-            <span>{{ visibleTimer }}ms</span>
+            <span>{{ timer }}ms</span>
+            <div class="time-list">
+                <span v-for="(item, idx) in timeList" :id="item" v-show="idx < 5">{{ item === "DNF" ? item : item + 'ms' }}</span>
+            </div>
         </div>
         <div class="cube" @click="scramble">
             <!-- LUF角块 -->
@@ -116,8 +119,8 @@
                 colorC: '',
                 colorD: '',
                 colorE: '',
-                Ua: ['colorA', 'colorB', 'colorA', 'colorB', 'colorD', 'colorB', 'colorC', 'colorC', 'colorC', 'colorD', 'colorA', 'colorD', 'colorA', 'colorB', 'colorA'],
-                Ub: ['colorA', 'colorD', 'colorA', 'colorB', 'colorA', 'colorB', 'colorC', 'colorC', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorD', 'colorA'],
+                Ua: ['colorA', 'colorD', 'colorA', 'colorB', 'colorA', 'colorB', 'colorC', 'colorC', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorD', 'colorA'],
+                Ub: ['colorA', 'colorB', 'colorA', 'colorB', 'colorD', 'colorB', 'colorC', 'colorC', 'colorC', 'colorD', 'colorA', 'colorD', 'colorA', 'colorB', 'colorA'],
                 Z: ['colorA', 'colorB', 'colorA', 'colorB', 'colorA', 'colorB', 'colorC', 'colorD', 'colorC', 'colorD', 'colorC', 'colorD', 'colorA', 'colorB', 'colorA'],
                 H: ['colorA', 'colorC', 'colorA', 'colorB', 'colorD', 'colorB', 'colorC', 'colorA', 'colorC', 'colorD', 'colorB', 'colorD', 'colorA', 'colorC', 'colorA'],
                 V: ['colorA', 'colorA', 'colorC', 'colorD', 'colorC', 'colorB', 'colorC', 'colorB', 'colorA', 'colorB', 'colorD', 'colorD', 'colorA', 'colorA', 'colorC'],
@@ -146,6 +149,8 @@
                 borange: ['white', 'green', 'yellow', 'blue', 'white', 'green', 'yellow'], 
                 timer: 0,
                 visibleTimer: 0,
+                IntervalId: '',
+                timeList: [],
                 answers: [],
                 pll: '',
                 right: false,
@@ -213,17 +218,24 @@
                 // 根据答案生成选项
                 initSelect() {
                     if (this.pll === 'Ua' || this.pll === 'Ub' || this.pll === 'Z' || this.pll === 'H') {
-                        this.answers = ['Ub', 'Ua', 'Z', 'H'];
+                        this.answers = ['Ua', 'Ub', 'Z', 'H'];
                     }
                     if (this.pll === 'Aa' || this.pll === 'Ab' || this.pll === 'V' || this.pll === 'Ra' || this.pll === 'Rb' || this.pll === 'Y' || this.pll === 'Ga' || this.pll === 'Gb' || this.pll === 'Gc' || this.pll === 'Gd') {
-                        this.answers = ['Aa', 'Ab', 'V', 'Ra', 'Rb', 'Y', 'Ga', 'Gb', 'Gc', 'Gd'];
+                        this.answers = ['V', 'Y', 'Aa', 'Ab', 'Ga', 'Gb', 'Gc', 'Gd', 'Ra', 'Rb'];
                     }
                     if (this.pll === 'E' || this.pll === 'T' || this.pll === 'Na' || this.pll === 'Nb' || this.pll === 'Ja' || this.pll === 'Jb' || this.pll === 'F') {
-                        this.answers = ['E', 'T', 'Na', 'Nb', 'Ja', 'Jb', 'F'];
+                        this.answers = ['E', 'T', 'F', 'Na', 'Nb', 'Ja', 'Jb'];
                     }
-                    this.answers.sort(function() {
-                        return (0.5-Math.random());
-                    });
+                    // 随机答案顺序
+                    // this.answers.sort(function() {
+                    //     return (0.5-Math.random());
+                    // });
+                },
+                // 计时
+                timeGo() {
+                    this.IntervalId = setInterval(() => {
+                        this.timer++;
+                    }, 1);
                 },
                 // 打乱
                 scramble() {
@@ -232,13 +244,14 @@
                     this.rondomBottom();
                     this.reversePll();
                     this.initSelect();
-                    this.time = Date.now();
+                    this.timeGo();
                 },
                 // 点击答案，反馈结果
                 clickAnswer(pll) {
                     if (this.pll === pll) {
                         this.right = true;
-                        this.visibleTimer = Date.now() - this.time;
+                        this.stopTime();
+                        this.scramble();
                     } else {
                         this.falseAnswer.push(pll);
                     }
@@ -246,6 +259,21 @@
                 // 显示正确答案
                 clickRight() {
                     this.right = true;
+                    this.stopTime(true);
+                },
+                // 停止计时并记录成绩
+                stopTime(dnf = false) {
+                    if (dnf) {
+                        this.timeList.reverse();
+                        this.timeList.push('DNF');
+                        this.timeList.reverse();
+                    } else {
+                        this.timeList.reverse();
+                        this.timeList.push(this.timer);
+                        this.timeList.reverse();
+                    }
+                    this.timer = 0;
+                    clearInterval(this.IntervalId);
                 }
             }
         });
