@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 8px;
+
+        }
+        .range {
+            margin: 0 10%;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .range select {
+            width: 24%;
+            font-size: 24px;
+        }
+        button.random {
+            margin-left: 10%;
+            width: 80%;
+            height: 40px;
+            font-size: 24px;
+        }
+        span.ask {
+            margin-left: 10%;
+            display: block;
+            max-width: 80%;
+            text-align: center;
+            height: 48px;
+        }
+        span {
+            font-size: 36px;
+        }
+        .fault {
+            margin-left: 10%;
+            display: flex;
+            width: 80%;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #a61b29;
+            color: #eee;
+            justify-content: center;
+            align-items: center;
+        }
+        .right {
+            margin-left: 10%;
+            display: flex;
+            width: 80%;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #207f4c;
+            color: #eee;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="range">
+        <select name="start">
+        </select>
+        <select name="end">
+        </select>
+    </div>
+    <button class="random">start</button>
+    <span class="ask"></span>
+    <div>
+        <span class="right"></span>
+        <span class="fault"></span>
+    </div>
+    <script>
+        // 程序初始创建下拉选项
+        window.onload = e => {
+            for (let i = 0; i < 24; i++) {
+                let startOption = document.createElement('option');
+                startOption.value = i;
+                startOption.text = String.fromCharCode(64  + (i < 20 ? (i + 1) : (i + 3)));
+                document.querySelector('[name="start"]').appendChild(startOption);
+                
+                let endOption = document.createElement('option');
+                endOption.value = i;
+                endOption.text = String.fromCharCode(64  + (i < 20 ? (i + 1) : (i + 3)));
+                document.querySelector('[name="end"]').appendChild(endOption);
+            }
+        }
+        
+        // 点击开始按钮创建题库 并 出题
+        document.querySelector('.random').addEventListener('click', e => {
+            creatAsk();
+            startAsk();
+        });
+        let intId;
+
+        // 正确按钮逻辑
+        let right = 0;
+        document.querySelector('.right').addEventListener('click', e => {
+            right++;
+            document.querySelector('.right').innerText = right;
+            startAsk();
+        });
+
+        // 错误按钮逻辑
+        let fault = 0;
+        let faults = [];
+        document.querySelector('.fault').addEventListener('click', e => {
+            faults.push(asked[asked.length - 1]);
+            fault++;
+            document.querySelector('.fault').innerText = fault;
+            startAsk();
+        });
+
+        // 检测答题是否结束(结束则自动开始错题轮)
+        let ask = [];
+        let asked = [];
+        function checkEnd() {
+            if (ask.length === asked.length) {
+                    document.querySelector('.fault').innerText = '';
+                    document.querySelector('.right').innerText = '';
+                    fault = 0;
+                    right = 0;
+                    asked = [];
+                if (faults.length != 0) {
+                    ask = faults;
+                    randomSort();
+                    faults = [];
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 开始出题
+        function startAsk() {
+            if (!checkEnd()) {
+                let idvalue = ask[asked.length];
+                asked.push(idvalue);
+                document.querySelector('span.ask').innerText = idvalue + '(' + asked.length + '/' + (ask.length) +')';
+            } else {
+                creatAsk();
+                startAsk();
+            }
+        }
+
+        // 清空数据
+        function reset() {
+            fault = 0;
+            right = 0;
+            asked = [];
+            ask = [];
+            faults = [];
+            document.querySelector('.fault').innerText = '';
+            document.querySelector('.right').innerText = '';
+        }
+
+        // 随机排序
+        function randomSort() {
+            ask = ask.sort(() => Math.random() - 0.5);
+        }
+
+        // 创建题库
+        function creatAsk() {
+            reset();
+            let start = document.querySelector('[name="start"]').value;
+            let end = document.querySelector('[name="end"]').value;
+            let arr = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','W','X','Y','Z'];
+            for (let i = (end > start ? start : 0); i < (end > start ? end : 24); i++) {
+                for (let j = 0; j < 8; j++) {
+                    let idvalue = arr[i] + arr[j];
+                    if (idvalue == 'AA' || idvalue == 'AB' || idvalue == 'BA' || idvalue == 'BB'
+                    || idvalue == 'CC' || idvalue == 'DD' || idvalue == 'EE' || idvalue == 'EF' || idvalue == 'FE'
+                    || idvalue == 'FF' || idvalue == 'GG' || idvalue == 'GH' || idvalue == 'HG' || idvalue == 'HH'
+                    || idvalue == 'II' || idvalue == 'JJ' || idvalue == 'KL' || idvalue == 'KK' || idvalue == 'LL' 
+                    || idvalue == 'LK' || idvalue == 'NN' || idvalue == 'MM' || idvalue == 'NM' || idvalue == 'MN' 
+                    || idvalue == 'OO' || idvalue == 'OP' || idvalue == 'PP' || idvalue == 'PO' || idvalue == 'QQ' 
+                    || idvalue == 'RR' || idvalue == 'ST' || idvalue == 'SS' || idvalue == 'TT' || idvalue == 'TS' 
+                    || idvalue == 'WW' || idvalue == 'XX' || idvalue == 'YY' || idvalue == 'ZZ' || idvalue == 'YZ' 
+                    || idvalue == 'ZY') {
+                        continue;
+                    }
+                    ask.push(idvalue);
+                }
+            }
+            randomSort();
+        }
+
+    </script>
+</body>
+</html>
