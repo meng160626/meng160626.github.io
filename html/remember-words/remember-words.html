@@ -164,10 +164,9 @@
             console.log(ask.length);
             for (let i = 0; i < ask.length; i++) {
                 let tempInd1 = Math.floor(Math.random()*i);
-                let tempInd2 = Math.floor(Math.random()*i);
-                let temp = ask[tempInd1];
-                ask[tempInd1] = ask[tempInd2];
-                ask[tempInd2] = temp;
+                let temp = ask[i];
+                ask[i] = ask[tempInd1];
+                ask[tempInd1] = temp;
             }
         }
 
