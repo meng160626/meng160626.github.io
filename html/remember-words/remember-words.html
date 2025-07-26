@@ -161,27 +161,26 @@
 
         // 随机排序
         function randomSort() {
-            ask = ask.sort(() => Math.random() - 0.5);
+            console.log(ask.length);
+            for (let i = 0; i < ask.length; i++) {
+                let tempInd1 = Math.floor(Math.random()*i);
+                let tempInd2 = Math.floor(Math.random()*i);
+                let temp = ask[tempInd1];
+                ask[tempInd1] = ask[tempInd2];
+                ask[tempInd2] = temp;
+            }
         }
 
         // 创建题库
         function creatAsk() {
             reset();
             let start = document.querySelector('[name="start"]').value;
-            let end = document.querySelector('[name="end"]').value;
+            let end = parseInt(document.querySelector('[name="end"]').value) + 1;
             let arr = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','W','X','Y','Z'];
             for (let i = (end > start ? start : 0); i < (end > start ? end : 24); i++) {
                 for (let j = 0; j < 24; j++) {
                     let idvalue = arr[i] + arr[j];
-                    if (idvalue == 'AA' || idvalue == 'AB' || idvalue == 'BA' || idvalue == 'BB'
-                    || idvalue == 'CC' || idvalue == 'DD' || idvalue == 'EE' || idvalue == 'EF' || idvalue == 'FE'
-                    || idvalue == 'FF' || idvalue == 'GG' || idvalue == 'GH' || idvalue == 'HG' || idvalue == 'HH'
-                    || idvalue == 'II' || idvalue == 'JJ' || idvalue == 'KL' || idvalue == 'KK' || idvalue == 'LL' 
-                    || idvalue == 'LK' || idvalue == 'NN' || idvalue == 'MM' || idvalue == 'NM' || idvalue == 'MN' 
-                    || idvalue == 'OO' || idvalue == 'OP' || idvalue == 'PP' || idvalue == 'PO' || idvalue == 'QQ' 
-                    || idvalue == 'RR' || idvalue == 'ST' || idvalue == 'SS' || idvalue == 'TT' || idvalue == 'TS' 
-                    || idvalue == 'WW' || idvalue == 'XX' || idvalue == 'YY' || idvalue == 'ZZ' || idvalue == 'YZ' 
-                    || idvalue == 'ZY') {
+                    if (idvalue[0] === idvalue[1]) {
                         continue;
                     }
                     ask.push(idvalue);
