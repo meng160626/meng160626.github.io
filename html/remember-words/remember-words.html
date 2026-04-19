@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡™œÎ¥ ¡∑œ∞</title>
+    <title>Áõ≤ÊãßÁªÉ‰π†</title>
     <style>
         body {
             margin: 0;
@@ -11,7 +11,7 @@
 
         }
         .range {
-            margin: 0 10%;
+            margin: 32px 10%;
             margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
@@ -59,23 +59,126 @@
             align-items: center;
             margin-bottom: 16px;
         }
+        /**
+            ÂÖ¨ÂºèÁªÉ‰π†css
+        **/
+        .change {
+            margin-left: 10%;
+            padding: 0 10px;
+            font-size: 18px;
+            margin-left: 10%;
+            display: inline-flex;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #5887f7;
+            color: #eee;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .practice {
+            background-color: white;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 60px;
+            left: 0;
+        }
+
+        .practice.hide {
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .practice .input-box {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .practice-start {
+            margin-top: 24px;
+            margin-left: 30%;
+            display: flex;
+            width: 40%;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #207f4c;
+            color: #eee;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .remember-word-page {
+            background-color: white;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            z-index: 9;
+            top: -58px;
+        }
+
+        .remember-word-page.hide {
+            z-index: -1;
+        }
+
+        .remember-word {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            padding-top: 24%;
+        }
+
+        .time {
+            font-size: 60px;
+            display: flex;
+            width: 100%;
+            justify-content: center;
+
+        }
     </style>
 </head>
 <body>
-    <div class="range">
-        <select name="start">
-        </select>
-        <select name="end">
-        </select>
+    <span class="change">ÂäüËÉΩÂàáÊç¢</span>
+    <!-- ËÅîÊÉ≥ËØçÈ°µÈù¢ -->
+    <div class="word">
+        <div class="range">
+            <select name="start">
+            </select>
+            <select name="end">
+            </select>
+        </div>
+        <button class="random">start</button>
+        <span class="ask"></span>
+        <div>
+            <span class="right"></span>
+            <span class="fault"></span>
+        </div>
     </div>
-    <button class="random">start</button>
-    <span class="ask"></span>
-    <div>
-        <span class="right"></span>
-        <span class="fault"></span>
-    </div>
+    <!-- ÂÖ¨ÂºèÁªÉ‰π†È°µÈù¢ -->
+     <div class="practice hide">
+        <div class="input-box">
+            <input type="text" name="a" value="B D F">
+            <input type="text" name="b" value="I J K L M N O P Q R S T X W Y Z">
+        </div>
+        <button class="practice-start">start</button>
+        <div>
+            <div style="display: flex;justify-content: center;">
+                <span class="pra-success">0</span><span>/</span><span class="pra-count">0</span>
+            </div>
+            <div style="display: flex;justify-content: center;">
+                <span>avg:</span><span class="avg">0</span>
+            </div>
+        </div>
+        <div class="remember-word-page hide">
+            <span class="remember-word"></span>
+            <span class="time"></span>
+        </div>
+     </div>
     <script>
-        // ≥Ã–Ú≥ı º¥¥Ω®œ¬¿≠—°œÓ
+        // Âä†ËΩΩ
         window.onload = e => {
             for (let i = 0; i < 24; i++) {
                 let startOption = document.createElement('option');
@@ -87,17 +190,17 @@
                 endOption.value = i;
                 endOption.text = String.fromCharCode(64  + (i < 20 ? (i + 1) : (i + 3)));
                 document.querySelector('[name="end"]').appendChild(endOption);
+
+
             }
         }
         
-        // µ„ª˜ø™ º∞¥≈•¥¥Ω®Ã‚ø‚ ≤¢ ≥ˆÃ‚
         document.querySelector('.random').addEventListener('click', e => {
             creatAsk();
             startAsk();
         });
         let intId;
 
-        // ’˝»∑∞¥≈•¬ﬂº≠
         let right = 0;
         document.querySelector('.right').addEventListener('click', e => {
             right++;
@@ -105,7 +208,6 @@
             startAsk();
         });
 
-        // ¥ÌŒÛ∞¥≈•¬ﬂº≠
         let fault = 0;
         let faults = [];
         document.querySelector('.fault').addEventListener('click', e => {
@@ -115,7 +217,6 @@
             startAsk();
         });
 
-        // ºÏ≤‚¥Ã‚ «∑ÒΩ· ¯(Ω· ¯‘Ú◊‘∂Øø™ º¥ÌÃ‚¬÷)
         let ask = [];
         let asked = [];
         function checkEnd() {
@@ -136,7 +237,6 @@
             return false;
         }
 
-        // ø™ º≥ˆÃ‚
         function startAsk() {
             if (!checkEnd()) {
                 let idvalue = ask[asked.length];
@@ -148,7 +248,6 @@
             }
         }
 
-        // «Âø’ ˝æ›
         function reset() {
             fault = 0;
             right = 0;
@@ -159,9 +258,7 @@
             document.querySelector('.right').innerText = '';
         }
 
-        // ÀÊª˙≈≈–Ú
         function randomSort() {
-            console.log(ask.length);
             for (let i = 0; i < ask.length; i++) {
                 let tempInd1 = Math.floor(Math.random()*i);
                 let temp = ask[i];
@@ -170,7 +267,6 @@
             }
         }
 
-        // ¥¥Ω®Ã‚ø‚
         function creatAsk() {
             reset();
             let start = document.querySelector('[name="start"]').value;
@@ -179,15 +275,107 @@
             for (let i = (end > start ? start : 0); i < (end > start ? end : 24); i++) {
                 for (let j = 0; j < 24; j++) {
                     let idvalue = arr[i] + arr[j];
-                    if (idvalue[0] === idvalue[1]) {
-                        continue;
-                    }
+                    // Èô§Âè†Â≠óÂ§ñÂÖ®ÈÉ®ËÅîÊÉ≥ËØç
+                    // if (idvalue[0] === idvalue[1]) {
+                    //     continue;
+                    // }
+                    // UR UFR ËÅîÊÉ≥ËØç
+                        if (idvalue[0] === idvalue[1] 
+                            || idvalue === 'AB' || idvalue === 'BA'
+                            || idvalue === 'EF' || idvalue === 'FE' || idvalue === 'GH' || idvalue === 'HG'
+                            || idvalue === 'GI' || idvalue === 'IG' || idvalue === 'GJ' || idvalue === 'JG'
+                            || idvalue === 'HI' || idvalue === 'IH' || idvalue === 'HJ' || idvalue === 'JH'
+                            || idvalue === 'KL' || idvalue === 'LK' || idvalue === 'MN' || idvalue === 'NM'
+                            || idvalue === 'OP' || idvalue === 'PO' || idvalue === 'ST' || idvalue === 'TS'
+                            || idvalue === 'YZ' || idvalue === 'ZY'
+                        ) {
+                            continue;
+                        }
                     ask.push(idvalue);
                 }
             }
             randomSort();
         }
 
+        var switchState = 0;
+        // Ê∑ªÂä† ÂäüËÉΩÂàáÊç¢ÊåâÈíÆ‰∫ã‰ª∂
+        document.querySelector('.change').addEventListener('click', e => {
+            let praPage = document.querySelector('.practice');
+            switchState = switchState === 0 ? 1 : 0;
+            if (switchState === 1) {
+                praPage.classList.remove('hide');
+            }
+            if (switchState === 0) {
+                praPage.classList.add('hide');
+            }
+        });
+
+        // ÁªÉ‰π†È°µÈù¢ÂºÄÂßãÊåâÈíÆ‰∫ã‰ª∂
+        var timer;
+        document.querySelector('.practice-start').addEventListener('click', e => {
+            document.querySelector('.remember-word-page').classList.remove('hide');
+            // ËÆ°Êó∂
+            let time = 0;
+            timer = setInterval(e => {
+                document.querySelector('.time').innerHTML = time.toFixed(1);
+                time = time + 0.1;
+            }, 100);
+            // ÁîüÊàêÈöèÊú∫ËÆ∞ÂøÜËØç
+            let count = (Math.random() * 2 + 4).toFixed(0);
+            let a = document.querySelector('[name=a]').value;
+            let b = document.querySelector('[name=b]').value;
+            let aArr = a.split(" ");
+            let bArr = b.split(" ");
+            let text = '';
+            
+            for (i = 0; i < count; i++) {
+                let aIndex = Math.floor((Math.random() * aArr.length));
+                let bIndex = Math.floor((Math.random() * bArr.length));
+                
+                text += aArr[aIndex] + bArr[bIndex] + ' ';
+            }
+            document.querySelector('.remember-word').innerHTML = text;
+        });
+
+        // ËÆ°Êó∂È°µÈù¢ÁÇπÂáª‰∫ã‰ª∂
+        let clickTime = 0;
+        let spendTime = 0;
+        document.querySelector('.remember-word-page').addEventListener('click', e => {
+            if (clickTime === 0) {
+                clickTime = 1;
+                document.querySelector('.remember-word').innerHTML = document.querySelector('.remember-word').innerHTML.split("").reverse().join("");
+            } else {
+                spendTime = parseFloat(document.querySelector('.time').innerHTML);
+                clickTime = 0;
+                document.querySelector('.remember-word-page').classList.add('hide');
+                clearInterval(timer);
+                document.querySelector('.time').innerHTML = '';
+                document.querySelector('.remember-word').innerHTML = '';
+                confrim();
+            }
+        });
+
+        // ÂºπÁ™ó
+        var praCount = 0;
+        var avg = 0;
+        var successCount = 0;
+        function confrim() {
+            var userResponse = confirm("ÊàêÂäüÔºü");
+            if (userResponse) {
+                // Áî®Êà∑ÁÇπÂáª‰∫ÜÁ°ÆÂÆö
+                praCount++;
+                successCount++;
+                avg = ((avg * (praCount - 1) + spendTime) / praCount).toFixed(3);
+
+                document.querySelector('.pra-success').innerHTML = successCount;
+                document.querySelector('.pra-count').innerHTML = praCount;
+                document.querySelector('.avg').innerHTML = avg;
+            } else {
+                // Áî®Êà∑ÁÇπÂáª‰∫ÜÂèñÊ∂à
+                praCount++;
+                document.querySelector('.pra-count').innerHTML = praCount;
+            }
+        }
     </script>
 </body>
 </html>
