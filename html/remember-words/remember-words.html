@@ -365,7 +365,7 @@
                 // 用户点击了确定
                 praCount++;
                 successCount++;
-                avg = ((avg * (praCount - 1) + spendTime) / praCount).toFixed(3);
+                avg = ((avg * (praCount - 1) + spendTime) / successCount).toFixed(3);
 
                 document.querySelector('.pra-success').innerHTML = successCount;
                 document.querySelector('.pra-count').innerHTML = praCount;
